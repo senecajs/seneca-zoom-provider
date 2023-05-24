@@ -128,7 +128,6 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
       throw this.fail('keymap')
     }
 
-    //doc_ref: https://developers.zoom.us/docs/internal-apps/s2s-oauth/
     const src = res.keymap.client_id.value + ':' + res.keymap.client_secret.value
     const auth = Buffer.from(src).toString('base64')
     this.shared.headers = {
