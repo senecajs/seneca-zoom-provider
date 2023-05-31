@@ -8,8 +8,8 @@ import * as Fs from 'fs'
 const Seneca = require('seneca')
 const SenecaMsgTest = require('seneca-msg-test')
 
-import TangocardProvider from '../src/tangocard-provider'
-import TangocardProviderDoc from '../src/TangocardProvider-doc'
+import ZoomProvider from '../src/zoom-provider'
+import ZoomProviderDoc from '../src/ZoomProvider-doc'
 
 const BasicMessages = require('./basic.messages.js')
 
@@ -21,18 +21,18 @@ if (Fs.existsSync(__dirname + '/local-config.js')) {
 }
 
 
-describe('tangocard-provider', () => {
+describe('zoom-provider', () => {
 
   test('happy', async () => {
-    expect(TangocardProvider).toBeDefined()
-    expect(TangocardProviderDoc).toBeDefined()
+    expect(ZoomProvider).toBeDefined()
+    expect(ZoomProviderDoc).toBeDefined()
 
     const seneca = await makeSeneca()
 
-    expect(await seneca.post('sys:provider,provider:tangocard,get:info'))
+    expect(await seneca.post('sys:provider,provider:zoom,get:info'))
       .toMatchObject({
         ok: true,
-        name: 'tangocard',
+        name: 'zoom',
       })
   })
 
@@ -43,14 +43,14 @@ describe('tangocard-provider', () => {
   })
 
 
-  test('list-brand', async () => {
+  test('save-meeting', async () => {
     if (!Config) return;
     const seneca = await makeSeneca()
 
-    const list = await seneca.entity("provider/tangocard/brand").list$()
-    // console.log('BRANDS', list)
+    const meeting = await seneca.entity("provider/zoom/meeting").save$()
+    // console.log('MEETING', meeting)
 
-    expect(list.length > 0).toBeTruthy()
+    expect(meeting.uuid).toBeTruthy()
   })
 
 })
@@ -65,25 +65,23 @@ async function makeSeneca() {
       // debug: true,
       file: [__dirname + '/local-env.js;?'],
       var: {
-        $TANGOCARD_KEY: String,
-        $TANGOCARD_NAME: String,
-        $TANGOCARD_CUSTID: String,
-        $TANGOCARD_ACCID: String,
+        $ZOOM_ACCOUNT_ID: String,
+        $ZOOM_CLIENT_ID: String,
+        $ZOOM_CLIENT_SECRET: String,
       }
     })
     .use('provider', {
       provider: {
-        tangocard: {
+        zoom: {
           keys: {
-            key: { value: '$TANGOCARD_KEY' },
-            name: { value: '$TANGOCARD_NAME' },
-            cust: { value: '$TANGOCARD_CUSTID' },
-            acc: { value: '$TANGOCARD_ACCID' },
+            acc_id: { value: '$ZOOM_ACCOUNT_ID' },
+            client_id: { value: '$ZOOM_CLIENT_ID' },
+            client_secret: { value: '$ZOOM_CLIENT_SECRET' },
           }
         }
       }
     })
-    .use(TangocardProvider, {
+    .use(ZoomProvider, {
       // fetch: Fetch,
     })
 
