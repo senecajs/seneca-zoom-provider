@@ -39,7 +39,6 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
   }, config)
 
 
-
   async function get_info(this: any, _msg: any) {
     return {
       ok: true,
@@ -119,7 +118,6 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
   })
 
 
-
   seneca.prepare(async function(this: any) {
     let res =
       await this.post('sys:provider,get:keymap,provider:zoom')
@@ -136,7 +134,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
 
     const accId = res.keymap.acc_id.value
     const oauthUrl =
-        `oauth/token?grant_type=account_credentials&account_id=${accId}`
+      `oauth/token?grant_type=account_credentials&account_id=${accId}`
     const accCredentials = await postJSON(makeUrl(`${oauthUrl}`), makeConfig())
 
     this.shared.headers.Authorization = `Bearer ${accCredentials.access_token}`
@@ -144,8 +142,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
 
 
   return {
-    exports: {
-    }
+    exports: {}
   }
 }
 
