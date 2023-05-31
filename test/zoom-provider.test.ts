@@ -43,14 +43,14 @@ describe('zoom-provider', () => {
   })
 
 
-  test('list-brand', async () => {
+  test('save-meeting', async () => {
     if (!Config) return;
     const seneca = await makeSeneca()
 
-    const list = await seneca.entity("provider/tangocard/brand").list$()
-    // console.log('BRANDS', list)
+    const meeting = await seneca.entity("provider/zoom/meeting").save$()
+    // console.log('MEETING', meeting)
 
-    expect(list.length > 0).toBeTruthy()
+    expect(meeting.uuid).toBeTruthy()
   })
 
 })
