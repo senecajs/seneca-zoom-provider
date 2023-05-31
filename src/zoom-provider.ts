@@ -23,7 +23,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
     postJSON,
     entityBuilder
   } = makeUtils({
-    name: 'tangocard',
+    name: 'zoom',
     url: options.url,
   })
 
@@ -51,31 +51,22 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
 
   entityBuilder(this, {
     provider: {
-      name: 'tangocard'
+      name: 'zoom'
     },
     entity: {
-      customer: {
+      meeting: {
         cmd: {
-          list: {
+          save: {
             action: async function(this: any, entize: any, msg: any) {
-              let json: any =
-                await getJSON(makeUrl('customers', msg.q), makeConfig())
-              let customers = json
-              let list = customers.map((data: any) => entize(data))
-              return list
-            },
-          }
-        }
-      },
-      brand: {
-        cmd: {
-          list: {
-            action: async function(this: any, entize: any, msg: any) {
-              let json: any =
-                await getJSON(makeUrl('catalogs', msg.q), makeConfig())
-              let brands = json.brands
-              let list = brands.map((data: any) => entize(data))
-              return list
+              const host = msg.q.host || 'me'
+              const meetingUrl = `v2/users/${host}/meetings`
+              const body = msg.q.properties || {}
+
+              const json = await postJSON(makeUrl(meetingUrl), makeConfig({
+                  body
+              }))
+
+              return entize(json)
             },
           }
         }
