@@ -142,7 +142,8 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
 
 
   return {
-    exports: {}
+    exports: {
+    }
   }
 }
 
