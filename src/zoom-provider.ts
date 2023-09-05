@@ -126,7 +126,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
     const accId = res.keymap.acc_id.value
     const oauthUrl =
       `oauth/token?grant_type=account_credentials&account_id=${accId}`
-    const accCredentials = await postJSON(makeUrl(`${oauthUrl}`), makeConfig())
+    const accCredentials = await postJSON(makeUrl(oauthUrl), makeConfig())
 
     this.shared.headers.Authorization = `Bearer ${accCredentials.access_token}`
   })
