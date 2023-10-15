@@ -60,7 +60,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
               const meetingId = msg.q.meetingId
 
               const meetingUrl = `v2/meetings/${meetingId}`
-              const json = await getJSON(makeUrl(meetingUrl), makeConfig({}))
+              const json = await getJSON(makeUrl(meetingUrl), makeConfig())
 
               return entize(json)
             }
