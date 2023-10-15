@@ -4,7 +4,7 @@
 const Pkg = require('../package.json')
 
 
-type TangocardProviderOptions = {
+type ZoomProviderOptions = {
   url: string
   fetch: any
   entity: Record<string, any>
@@ -12,7 +12,7 @@ type TangocardProviderOptions = {
 }
 
 
-function TangocardProvider(this: any, options: TangocardProviderOptions) {
+function ZoomProvider(this: any, options: ZoomProviderOptions) {
   const seneca: any = this
 
   const makeUtils = this.export('provider/makeUtils')
@@ -23,13 +23,13 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
     postJSON,
     entityBuilder
   } = makeUtils({
-    name: 'tangocard',
+    name: 'zoom',
     url: options.url,
   })
 
 
   seneca
-    .message('sys:provider,provider:tangocard,get:info', get_info)
+    .message('sys:provider,provider:zoom,get:info', get_info)
 
 
   const makeConfig = (config?: any) => seneca.util.deep({
@@ -39,11 +39,10 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
   }, config)
 
 
-
   async function get_info(this: any, _msg: any) {
     return {
       ok: true,
-      name: 'tangocard',
+      name: 'zoom',
       version: Pkg.version,
     }
   }
@@ -51,31 +50,32 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
 
   entityBuilder(this, {
     provider: {
-      name: 'tangocard'
+      name: 'zoom'
     },
     entity: {
-      customer: {
+      meeting: {
         cmd: {
-          list: {
+          load: {
             action: async function(this: any, entize: any, msg: any) {
-              let json: any =
-                await getJSON(makeUrl('customers', msg.q), makeConfig())
-              let customers = json
-              let list = customers.map((data: any) => entize(data))
-              return list
-            },
-          }
-        }
-      },
-      brand: {
-        cmd: {
-          list: {
+              const meetingId = msg.q.meetingId
+
+              const meetingUrl = `v2/meetings/${meetingId}`
+              const json = await getJSON(makeUrl(meetingUrl), makeConfig())
+
+              return entize(json)
+            }
+          },
+          save: {
             action: async function(this: any, entize: any, msg: any) {
-              let json: any =
-                await getJSON(makeUrl('catalogs', msg.q), makeConfig())
-              let brands = json.brands
-              let list = brands.map((data: any) => entize(data))
-              return list
+              const host = msg.q.host || 'me'
+              const meetingUrl = `v2/users/${host}/meetings`
+              const body = msg.q.properties || {}
+
+              const json = await postJSON(makeUrl(meetingUrl), makeConfig({
+                body
+              }))
+
+              return entize(json)
             },
           }
         }
@@ -119,27 +119,26 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
   })
 
 
-
   seneca.prepare(async function(this: any) {
     let res =
-      await this.post('sys:provider,get:keymap,provider:tangocard')
+      await this.post('sys:provider,get:keymap,provider:zoom')
 
     if (!res.ok) {
       throw this.fail('keymap')
     }
 
-    let src = res.keymap.name.value + ':' + res.keymap.key.value
-    let auth = Buffer.from(src).toString('base64')
-
+    const src = res.keymap.client_id.value + ':' + res.keymap.client_secret.value
+    const auth = Buffer.from(src).toString('base64')
     this.shared.headers = {
       Authorization: 'Basic ' + auth
     }
 
-    this.shared.primary = {
-      customerIdentifier: res.keymap.cust.value,
-      accountIdentifier: res.keymap.acc.value,
-    }
+    const accId = res.keymap.acc_id.value
+    const oauthUrl =
+      `oauth/token?grant_type=account_credentials&account_id=${accId}`
+    const accCredentials = await postJSON(makeUrl(oauthUrl), makeConfig())
 
+    this.shared.headers.Authorization = `Bearer ${accCredentials.access_token}`
   })
 
 
@@ -151,10 +150,10 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
 
 
 // Default options.
-const defaults: TangocardProviderOptions = {
+const defaults: ZoomProviderOptions = {
 
   // NOTE: include trailing /
-  url: 'https://integration-api.tangocard.com/raas/v2/',
+  url: 'https://api.zoom.us/',
 
   // Use global fetch by default - if exists
   fetch: ('undefined' === typeof fetch ? undefined : fetch),
@@ -172,10 +171,10 @@ const defaults: TangocardProviderOptions = {
 }
 
 
-Object.assign(TangocardProvider, { defaults })
+Object.assign(ZoomProvider, { defaults })
 
-export default TangocardProvider
+export default ZoomProvider
 
 if ('undefined' !== typeof (module)) {
-  module.exports = TangocardProvider
+  module.exports = ZoomProvider
 }
