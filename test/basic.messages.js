@@ -78,5 +78,20 @@ module.exports = {
         }
       },
     },
+    {
+      name: 'load_meeting',
+      pattern: 'base:zoom,cmd:load,name:meeting,role:entity',
+      params: {
+        ent: {
+          properties: {
+            meetingid: '`save_meeting:out.id`',
+          }
+        }
+      },
+      out: {
+        'entity$': '-/zoom/meeting',
+        id: '`save_meeting:out.id`'
+      },
+    },
   ]
 }

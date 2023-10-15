@@ -53,6 +53,17 @@ describe('zoom-provider', () => {
     expect(meeting.uuid).toBeTruthy()
   })
 
+  test('load-meeting', async () => {
+    if (!Config) return;
+    const seneca = await makeSeneca()
+
+    const meetingCreated = await seneca.entity("provider/zoom/meeting").save$()
+    const meetingLoaded = await seneca.entity("provider/zoom/meeting").load$({ meetingId: meetingCreated.id })
+
+    expect(meetingLoaded.id).toEqual(meetingCreated.id)
+    expect(meetingLoaded.join_url).toEqual(meetingCreated.join_url)
+  })
+
 })
 
 
