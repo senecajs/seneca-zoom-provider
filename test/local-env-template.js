@@ -1,6 +1,5 @@
 module.exports = {
-  TANGOCARD_NAME: '<NAME>',
-  TANGOCARD_KEY: '<KEY>',
-  TANGOCARD_CUSTID: '<customerIdentifier>',
-  TANGOCARD_ACCID: '<accountIdentifier>',
+  ZOOM_CLIENT_SECRET: '<CLIENT_SECRET>',
+  ZOOM_ACCOUNT_ID: '<ACCOUNT_ID>',
+  ZOOM_CLIENT_ID: 'ZOOM_CLIENT_ID',
 }
