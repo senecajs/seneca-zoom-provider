@@ -13,6 +13,8 @@ import ZoomProviderDoc from '../src/ZoomProvider-doc'
 
 const BasicMessages = require('./basic.messages.js')
 
+const { Maintain } = require('@seneca/maintain')
+
 
 // Only run some tests locally (not on Github Actions).
 let Config = undefined
@@ -36,6 +38,7 @@ describe('zoom-provider', () => {
       })
   })
 
+  test('maintain', Maintain)
 
   test('messages', async () => {
     const seneca = await makeSeneca()

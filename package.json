@@ -49,7 +49,8 @@
     "seneca-promisify": ">=3"
   },
   "devDependencies": {
-    "@seneca/doc": "^4.1.0",
+    "@seneca/doc": "^4.2.4",
+    "@seneca/maintain": "0.0.28",
     "@seneca/env": ">=0.2",
     "@seneca/provider": "2.0.1",
     "@types/jest": "^29.4.0",
