@@ -42,13 +42,45 @@ describe('zoom-provider', () => {
     await (SenecaMsgTest(seneca, BasicMessages)())
   })
 
-
-  test('list-brand', async () => {
+  test('save-meeting', async () => {
     if (!Config) return;
     const seneca = await makeSeneca()
 
-    const list = await seneca.entity("provider/zoom/brand").list$()
-    // console.log('BRANDS', list)
+    let save0 = await seneca.entity("provider/zoom/meeting").save$({
+      topic: 'My Zoom Meeting',
+      type: 2, 
+      start_time: new Date(),
+      duration: 60
+    })
+    
+    expect(save0.topic === 'My Zoom Meeting'
+      && save0.duration === 60).toBeTruthy()
+    
+    save0 = await seneca.entity("provider/zoom/meeting").save$({
+      id: save0.id,
+      topic: 'Updated Zoom Meeting',
+      type: 2, 
+      start_time: new Date(),
+      duration: 30
+    })
+    
+    expect(save0.topic === 'Updated Zoom Meeting'
+      && save0.duration === 30).toBeTruthy()
+    
+    // console.log('MEETING: ', save0)
+    
+  })
+  
+  test('remove-meeting', async () => {
+    if (!Config) return;
+    const seneca = await makeSeneca()
+  })
+
+  test('list-meeting', async () => {
+    if (!Config) return;
+    const seneca = await makeSeneca()
+
+    const list = await seneca.entity("provider/zoom/meeting").list$()
 
     expect(list.length > 0).toBeTruthy()
   })
@@ -61,25 +93,22 @@ async function makeSeneca() {
     .test()
     .use('promisify')
     .use('entity')
-    /*
     .use('env', {
       // debug: true,
       file: [__dirname + '/local-env.js;?'],
       var: {
-        $ZOOM_KEY: String,
-        $ZOOM_NAME: String,
-        $ZOOM_CUSTID: String,
-        $ZOOM_ACCID: String,
+        $ZOOM_CLIENT_SECRET: String,
+        $ZOOM_ACCOUNT_ID: String,
+        $ZOOM_CLIENT_ID: String,
       }
     })
     .use('provider', {
       provider: {
         zoom: {
           keys: {
-            key: { value: '$ZOOM_KEY' },
-            name: { value: '$ZOOM_NAME' },
-            cust: { value: '$ZOOM_CUSTID' },
-            acc: { value: '$ZOOM_ACCID' },
+            client_secret: { value: '$ZOOM_CLIENT_SECRET' },
+            account_id: { value: '$ZOOM_ACCOUNT_ID' },
+            client_id: { value: '$ZOOM_CLIENT_ID' }
           }
         }
       }
@@ -87,7 +116,7 @@ async function makeSeneca() {
     .use(ZoomProvider, {
       // fetch: Fetch,
     })
-    */
+    
 
   return seneca.ready()
 }

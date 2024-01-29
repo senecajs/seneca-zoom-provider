@@ -1,11 +1,13 @@
-/* Copyright © 2022-2023 Seneca Project Contributors, MIT License. */
+/* Copyright © 2023-2024 Seneca Project Contributors, MIT License. */
 
 
 const Pkg = require('../package.json')
 
 
 type ZoomProviderOptions = {
-  url: string
+  url_meeting: string
+  update_url_meeting: string
+  auth_token_url: string
   fetch: any
   entity: Record<string, any>
   debug: boolean
@@ -24,7 +26,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
     entityBuilder
   } = makeUtils({
     name: 'zoom',
-    url: options.url,
+    // url: options.url,
   })
 
 
@@ -47,104 +49,115 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
       version: Pkg.version,
     }
   }
-
+  
+  function outbound(this: any, data: any) {
+  }
 
   entityBuilder(this, {
     provider: {
       name: 'zoom'
     },
     entity: {
-      customer: {
+      meeting: {
         cmd: {
           list: {
             action: async function(this: any, entize: any, msg: any) {
-              let json: any =
-                await getJSON(makeUrl('customers', msg.q), makeConfig())
-              let customers = json
-              let list = customers.map((data: any) => entize(data))
+              let q = msg.q || {}
+              const limit = q.limit$ || 30
+              let meeting = await getJSON(options.url_meeting + `?page_size=${limit}`, makeConfig())
+              
+              let list = meeting.meetings.map((data: any) => entize(data))
+              list.page = meeting.page_size
               return list
-            },
-          }
-        }
-      },
-      brand: {
-        cmd: {
-          list: {
-            action: async function(this: any, entize: any, msg: any) {
-              let json: any =
-                await getJSON(makeUrl('catalogs', msg.q), makeConfig())
-              let brands = json.brands
-              let list = brands.map((data: any) => entize(data))
-              return list
-            },
-          }
-        }
-      },
-      order: {
-        cmd: {
-          list: {
-            action: async function(this: any, entize: any, msg: any) {
-              let json: any =
-                await getJSON(makeUrl('orders', msg.q), makeConfig())
-              let orders = json.orders
-              let list = orders.map((data: any) => entize(data))
-
-              // TODO: ensure seneca-transport preserves array props
-              list.page = json.page
-
-              return list
-            },
+              
+            }
           },
           save: {
             action: async function(this: any, entize: any, msg: any) {
-              let body = this.util.deep(
-                this.shared.primary,
-                options.entity.order.save,
-                msg.ent.data$(false)
-              )
-
-              let json: any =
-                await postJSON(makeUrl('orders', msg.q), makeConfig({
-                  body
+              let ent = msg.ent
+              let data = null != ent ? ent.data$(false) : {}
+              let create_meeting_url = ''
+              let meeting = null
+              
+              let update = null != ent.id
+              data.start_time = 
+                data.start_time instanceof Date ? data.start_time.toISOString() : data.start_time
+              
+              let body = data
+              
+              if (update) {
+                 create_meeting_url = `${options.update_url_meeting}/${ent.id}`
+                 
+                 meeting = await fetch(create_meeting_url, {
+                   method: 'PATCH',
+                   headers: {
+                     'Content-Type': 'application/json',
+                     ...seneca.shared.headers
+                   },
+                   body: JSON.stringify(body),
+                 })
+                 
+                 let get_meeting = await getJSON(create_meeting_url, makeConfig())
+                 
+                 meeting = seneca.util.deep(data, get_meeting)
+              } else {
+                create_meeting_url = options.url_meeting
+                meeting = await postJSON(create_meeting_url, makeConfig({
+                  body,
                 }))
-
-              let order = json
-              order.id = order.referenceOrderID
-              return entize(order)
-            },
-          }
+              }
+              
+              return entize(meeting)
+            }
+          },
+          
+          
         }
       }
     }
   })
-
-
+  
+  async function get_access_token(this: any) {
+    let url = `${options.auth_token_url}&account_id=${this.shared.primary.accountIdentifier}`
+    
+    const form = `${this.shared.primary.clientIdentifier}:${this.shared.primary.clientSecret}`
+    const authHeader = 'Basic ' + Buffer.from(form).toString('base64');
+    const { access_token } = await postJSON(url, {
+      headers: {
+        'Authorization': authHeader
+      }
+    })
+    
+    return access_token
+  }
 
   seneca.prepare(async function(this: any) {
     let res =
       await this.post('sys:provider,get:keymap,provider:zoom')
-
+    
     if (!res.ok) {
       throw this.fail('keymap')
     }
-
-    let src = res.keymap.name.value + ':' + res.keymap.key.value
-    let auth = Buffer.from(src).toString('base64')
-
-    this.shared.headers = {
-      Authorization: 'Basic ' + auth
-    }
-
+    
     this.shared.primary = {
-      customerIdentifier: res.keymap.cust.value,
-      accountIdentifier: res.keymap.acc.value,
+      clientIdentifier: res.keymap.client_id.value,
+      accountIdentifier: res.keymap.account_id.value,
+      clientSecret: res.keymap.client_secret.value,
     }
+    
+    const access_token = await get_access_token.call(this)
+    
+    this.shared.headers = {
+      "Authorization": `Bearer ${access_token}`
+    }
+
 
   })
 
 
   return {
     exports: {
+      sdk: () => null
     }
   }
 }
@@ -153,15 +166,27 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
 // Default options.
 const defaults: ZoomProviderOptions = {
 
-  url: 'https://api.zoom.us/v2/users/me/meetings',
+  url_meeting: 'https://api.zoom.us/v2/users/me/meetings',
+  update_url_meeting: 'https://api.zoom.us/v2/meetings',
+  auth_token_url: 'https://zoom.us/oauth/token?grant_type=account_credentials',
 
   // Use global fetch by default - if exists
   fetch: ('undefined' === typeof fetch ? undefined : fetch),
 
   entity: {
-    order: {
+    meeting: {
       save: {
-        // Default fields
+        // 'entity$': String,
+        // 'uuid': String,
+        // 'id': Number,
+        // 'host_id': String,
+        // 'topic': String,
+        // 'type': Number,
+        // 'start_time': String,
+        // 'duration': Number,
+        // 'time_zone': String,
+        // 'created_at': String,
+        // 'join_url': String
       }
     }
   },
