@@ -4,7 +4,7 @@
 const Pkg = require('../package.json')
 
 
-type TangocardProviderOptions = {
+type ZoomProviderOptions = {
   url: string
   fetch: any
   entity: Record<string, any>
@@ -12,7 +12,7 @@ type TangocardProviderOptions = {
 }
 
 
-function TangocardProvider(this: any, options: TangocardProviderOptions) {
+function ZoomProvider(this: any, options: ZoomProviderOptions) {
   const seneca: any = this
 
   const makeUtils = this.export('provider/makeUtils')
@@ -23,13 +23,13 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
     postJSON,
     entityBuilder
   } = makeUtils({
-    name: 'tangocard',
+    name: 'zoom',
     url: options.url,
   })
 
 
   seneca
-    .message('sys:provider,provider:tangocard,get:info', get_info)
+    .message('sys:provider,provider:zoom,get:info', get_info)
 
 
   const makeConfig = (config?: any) => seneca.util.deep({
@@ -43,7 +43,7 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
   async function get_info(this: any, _msg: any) {
     return {
       ok: true,
-      name: 'tangocard',
+      name: 'zoom',
       version: Pkg.version,
     }
   }
@@ -51,7 +51,7 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
 
   entityBuilder(this, {
     provider: {
-      name: 'tangocard'
+      name: 'zoom'
     },
     entity: {
       customer: {
@@ -122,7 +122,7 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
 
   seneca.prepare(async function(this: any) {
     let res =
-      await this.post('sys:provider,get:keymap,provider:tangocard')
+      await this.post('sys:provider,get:keymap,provider:zoom')
 
     if (!res.ok) {
       throw this.fail('keymap')
@@ -151,7 +151,7 @@ function TangocardProvider(this: any, options: TangocardProviderOptions) {
 
 
 // Default options.
-const defaults: TangocardProviderOptions = {
+const defaults: ZoomProviderOptions = {
 
   // NOTE: include trailing /
   url: 'https://integration-api.tangocard.com/raas/v2/',
@@ -172,10 +172,10 @@ const defaults: TangocardProviderOptions = {
 }
 
 
-Object.assign(TangocardProvider, { defaults })
+Object.assign(ZoomProvider, { defaults })
 
-export default TangocardProvider
+export default ZoomProvider
 
 if ('undefined' !== typeof (module)) {
-  module.exports = TangocardProvider
+  module.exports = ZoomProvider
 }

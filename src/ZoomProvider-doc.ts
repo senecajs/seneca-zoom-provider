@@ -1,10 +1,10 @@
-/* Copyright © 2022 Seneca Project Contributors, MIT License. */
+/* Copyright © 2023 Seneca Project Contributors, MIT License. */
 
 
 const docs = {
 
   get_info: {
-    desc: 'Get information about the Tangocard SDK.',
+    desc: 'Get information about the Zoom SDK.',
   },
 
 }
