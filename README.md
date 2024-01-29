@@ -1,10 +1,10 @@
 ![Seneca Tangocard-Provider](http://senecajs.org/files/assets/seneca-logo.png)
 
-> _Seneca Tangocard-Provider_ is a plugin for [Seneca](http://senecajs.org)
+> _Seneca Zoom-Provider_ is a plugin for [Seneca](http://senecajs.org)
 
 
-Provides access to the Tangocard API using the Seneca *provider*
-convention. Tangocard API entities are represented as Seneca entities so
+Provides access to the Zoom API using the Seneca *provider*
+convention. Zoom API entities are represented as Seneca entities so
 that they can be accessed using the Seneca entity API and messages.
 
 See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data
@@ -36,38 +36,40 @@ Seneca()
   // Get API keys using the seneca-env plugin
   .use('env', {
     var: {
-      $TANGOCARD_APIKEY: String,
-      $TANGOCARD_USERTOKEN: String,
+      $ZOOM_CLIENT_SECRET: String,
+      $ZOOM_ACCOUNT_ID: String,
+      $ZOOM_CLIENT_ID: String,
     }
   })
   .use('provider', {
     provider: {
-      tangocard: {
+      zoom: {
         keys: {
-          apikey: { value: '$TANGOCARD_APIKEY' },
-          usertoken: { value: '$TANGOCARD_USERTOKEN' },
+          client_secret: { value: '$ZOOM_CLIENT_SECRET' },
+          account_id: { value: '$ZOOM_ACCOUNT_ID' },
+          client_id: { value: '$ZOOM_CLIENT_ID' }
         }
       }
     }
   })
-  .use('tangocard-provider')
+  .use('zoom-provider')
 
-let board = await seneca.entity('provider/tangocard/board')
-  .load$('<tangocard-board-id>')
+let meeting = await seneca.entity('provider/zoom/meeting')
+  .load$('<zoom-meeting-id>')
 
-Console.log('BOARD', board)
+Console.log('MEETING', meeting)
 
-board.desc = 'New description'
-board = await board.save$()
+meeting.start_time = new Date()
+meeting = await meeting.save$()
 
-Console.log('UPDATED BOARD', board)
+Console.log('UPDATED MEETING', meeting)
 
 ```
 
 ## Install
 
 ```sh
-$ npm install @seneca/tangocard-provider @seneca/env
+$ npm install @seneca/zoom-provider @seneca/env
 ```
 
 
@@ -84,7 +86,7 @@ Set plugin options when loading with:
 ```js
 
 
-seneca.use('TangocardProvider', { name: value, ... })
+seneca.use('ZoomProvider', { name: value, ... })
 
 
 ```
@@ -102,9 +104,9 @@ seneca.use('TangocardProvider', { name: value, ... })
 
 ## Action Patterns
 
-* [role:entity,base:tangocard,cmd:load,name:repo,zone:provider](#-roleentitybasetangocardcmdloadnamerepozoneprovider-)
-* [role:entity,base:tangocard,cmd:save,name:repo,zone:provider](#-roleentitybasetangocardcmdsavenamerepozoneprovider-)
-* [sys:provider,get:info,provider:tangocard](#-sysprovidergetinfoprovidertangocard-)
+* [role:entity,base:zoom,cmd:load,name:repo,zone:provider](#-roleentitybasezoomcmdloadnamerepozoneprovider-)
+* [role:entity,base:zoom,cmd:save,name:repo,zone:provider](#-roleentitybasezoomcmdsavenamerepozoneprovider-)
+* [sys:provider,get:info,provider:zoom](#-sysprovidergetinfoproviderzoom-)
 
 
 <!--END:action-list-->
@@ -114,21 +116,21 @@ seneca.use('TangocardProvider', { name: value, ... })
 
 ## Action Descriptions
 
-### &laquo; `role:entity,base:tangocard,cmd:load,name:repo,zone:provider` &raquo;
+### &laquo; `role:entity,base:zoom,cmd:load,name:repo,zone:provider` &raquo;
 
-Load Tangocard repository data into an entity.
-
-
-
-----------
-### &laquo; `role:entity,base:tangocard,cmd:save,name:repo,zone:provider` &raquo;
-
-Update Tangocard repository data from an entity.
+Load Zoom repository data into an entity.
 
 
 
 ----------
-### &laquo; `sys:provider,get:info,provider:tangocard` &raquo;
+### &laquo; `role:entity,base:zoom,cmd:save,name:repo,zone:provider` &raquo;
+
+Update Zoom repository data from an entity.
+
+
+
+----------
+### &laquo; `sys:provider,get:info,provider:zoom` &raquo;
 
 Get information about the provider.
 
