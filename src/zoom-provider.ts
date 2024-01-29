@@ -23,6 +23,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
     makeUrl,
     getJSON,
     postJSON,
+    deleteJSON,
     entityBuilder
   } = makeUtils({
     name: 'zoom',
@@ -110,6 +111,29 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
               return entize(meeting)
             }
           },
+          
+          remove: {
+            action: async function(this: any, entize: any, msg: any) {
+              let ent = msg.ent || {}
+              let q = msg.q || {}
+              let id = null == q.id ? ( null == ent ? null : ent.id ) : q.id
+              let meeting = null
+              
+              const delete_meeting_url = `${options.update_url_meeting}/${id}`
+              const res = await fetch(delete_meeting_url, {
+                method: 'DELETE',
+                headers: {
+                  ...seneca.shared.headers
+                },
+              })
+              if(200 <= res.status && res.status < 300) {
+                return entize(null)
+              }
+              return entize({})
+              
+              
+            }
+          },       
           
           
         }
