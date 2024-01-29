@@ -1,4 +1,4 @@
-/* Copyright © 2022 Seneca Project Contributors, MIT License. */
+/* Copyright © 2023 Seneca Project Contributors, MIT License. */
 
 import * as Fs from 'fs'
 
@@ -8,8 +8,8 @@ import * as Fs from 'fs'
 const Seneca = require('seneca')
 const SenecaMsgTest = require('seneca-msg-test')
 
-import TangocardProvider from '../src/tangocard-provider'
-import TangocardProviderDoc from '../src/TangocardProvider-doc'
+import ZoomProvider from '../src/zoom-provider'
+import ZoomProviderDoc from '../src/ZoomProvider-doc'
 
 const BasicMessages = require('./basic.messages.js')
 
@@ -21,18 +21,18 @@ if (Fs.existsSync(__dirname + '/local-config.js')) {
 }
 
 
-describe('tangocard-provider', () => {
+describe('zoom-provider', () => {
 
   test('happy', async () => {
-    expect(TangocardProvider).toBeDefined()
-    expect(TangocardProviderDoc).toBeDefined()
+    expect(ZoomProvider).toBeDefined()
+    expect(ZoomProviderDoc).toBeDefined()
 
     const seneca = await makeSeneca()
 
-    expect(await seneca.post('sys:provider,provider:tangocard,get:info'))
+    expect(await seneca.post('sys:provider,provider:zoom,get:info'))
       .toMatchObject({
         ok: true,
-        name: 'tangocard',
+        name: 'zoom',
       })
   })
 
@@ -47,7 +47,7 @@ describe('tangocard-provider', () => {
     if (!Config) return;
     const seneca = await makeSeneca()
 
-    const list = await seneca.entity("provider/tangocard/brand").list$()
+    const list = await seneca.entity("provider/zoom/brand").list$()
     // console.log('BRANDS', list)
 
     expect(list.length > 0).toBeTruthy()
@@ -61,31 +61,33 @@ async function makeSeneca() {
     .test()
     .use('promisify')
     .use('entity')
+    /*
     .use('env', {
       // debug: true,
       file: [__dirname + '/local-env.js;?'],
       var: {
-        $TANGOCARD_KEY: String,
-        $TANGOCARD_NAME: String,
-        $TANGOCARD_CUSTID: String,
-        $TANGOCARD_ACCID: String,
+        $ZOOM_KEY: String,
+        $ZOOM_NAME: String,
+        $ZOOM_CUSTID: String,
+        $ZOOM_ACCID: String,
       }
     })
     .use('provider', {
       provider: {
-        tangocard: {
+        zoom: {
           keys: {
-            key: { value: '$TANGOCARD_KEY' },
-            name: { value: '$TANGOCARD_NAME' },
-            cust: { value: '$TANGOCARD_CUSTID' },
-            acc: { value: '$TANGOCARD_ACCID' },
+            key: { value: '$ZOOM_KEY' },
+            name: { value: '$ZOOM_NAME' },
+            cust: { value: '$ZOOM_CUSTID' },
+            acc: { value: '$ZOOM_ACCID' },
           }
         }
       }
     })
-    .use(TangocardProvider, {
+    .use(ZoomProvider, {
       // fetch: Fetch,
     })
+    */
 
   return seneca.ready()
 }
