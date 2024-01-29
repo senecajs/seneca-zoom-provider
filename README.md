@@ -79,22 +79,13 @@ $ npm install @seneca/zoom-provider @seneca/env
 
 ## Options
 
-* `debug` : boolean <i><small>false</small></i>
-
-
-Set plugin options when loading with:
-```js
-
-
-seneca.use('ZoomProvider', { name: value, ... })
-
-
-```
-
-
-<small>Note: <code>foo.bar</code> in the list above means 
-<code>{ foo: { bar: ... } }</code></small> 
-
+* `url_meeting` : string
+* `update_url_meeting` : string
+* `auth_token_url` : string
+* `fetch` : function
+* `entity` : object
+* `debug` : boolean
+* `init$` : boolean
 
 
 <!--END:options-->
@@ -104,9 +95,10 @@ seneca.use('ZoomProvider', { name: value, ... })
 
 ## Action Patterns
 
-* [role:entity,base:zoom,cmd:load,name:repo,zone:provider](#-roleentitybasezoomcmdloadnamerepozoneprovider-)
-* [role:entity,base:zoom,cmd:save,name:repo,zone:provider](#-roleentitybasezoomcmdsavenamerepozoneprovider-)
-* [sys:provider,get:info,provider:zoom](#-sysprovidergetinfoproviderzoom-)
+* ["sys":"entity","base":"zoom","cmd":"list","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdlistnamemeetingzoneprovider-)
+* ["sys":"entity","base":"zoom","cmd":"remove","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdremovenamemeetingzoneprovider-)
+* ["sys":"entity","base":"zoom","cmd":"save","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdsavenamemeetingzoneprovider-)
+* ["sys":"provider","get":"info","provider":"zoom"](#-sysprovidergetinfoproviderzoom-)
 
 
 <!--END:action-list-->
@@ -116,23 +108,50 @@ seneca.use('ZoomProvider', { name: value, ... })
 
 ## Action Descriptions
 
-### &laquo; `role:entity,base:zoom,cmd:load,name:repo,zone:provider` &raquo;
+### &laquo; `"sys":"entity","base":"zoom","cmd":"list","name":"meeting","zone":"provider"` &raquo;
 
-Load Zoom repository data into an entity.
+List Meeting data into an entity.
+
+
+
+
+
+#### Replies With
+
+
+```
+{}
+```
+
+
+----------
+### &laquo; `"sys":"entity","base":"zoom","cmd":"remove","name":"meeting","zone":"provider"` &raquo;
+
+No description provided.
 
 
 
 ----------
-### &laquo; `role:entity,base:zoom,cmd:save,name:repo,zone:provider` &raquo;
+### &laquo; `"sys":"entity","base":"zoom","cmd":"save","name":"meeting","zone":"provider"` &raquo;
 
-Update Zoom repository data from an entity.
+Update/Save Meeting data into an entity.
 
+
+
+
+
+#### Replies With
+
+
+```
+{}
+```
 
 
 ----------
-### &laquo; `sys:provider,get:info,provider:zoom` &raquo;
+### &laquo; `"sys":"provider","get":"info","provider":"zoom"` &raquo;
 
-Get information about the provider.
+Get information about the Zoom SDK.
 
 
 

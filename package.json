@@ -23,7 +23,7 @@
     "test-watch": "jest --coverage --watchAll",
     "watch": "tsc -w -d",
     "build": "tsc -d",
-    "doc": "echo seneca-doc -p @seneca/provider FIX-broken",
+    "doc": "seneca-doc -p @seneca/provider FIX-broken",
     "clean": "rm -rf node_modules dist yarn.lock package-lock.json",
     "reset": "npm run clean && npm i && npm test",
     "repo-tag": "REPO_VERSION=`node -e \"console.log(require('./package').version)\"` && echo TAG: v$REPO_VERSION && git commit -a -m v$REPO_VERSION && git push && git tag v$REPO_VERSION && git push --tags;",
@@ -49,7 +49,7 @@
     "seneca-promisify": ">=3"
   },
   "devDependencies": {
-    "@seneca/doc": "^4.2.4",
+    "@seneca/doc": "^6.0.0",
     "@seneca/maintain": "0.0.28",
     "@seneca/env": ">=0.2",
     "@seneca/provider": "2.0.1",
