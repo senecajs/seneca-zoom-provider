@@ -153,8 +153,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
 // Default options.
 const defaults: ZoomProviderOptions = {
 
-  // NOTE: include trailing /
-  url: 'https://integration-api.tangocard.com/raas/v2/',
+  url: 'https://api.zoom.us/v2/users/me/meetings',
 
   // Use global fetch by default - if exists
   fetch: ('undefined' === typeof fetch ? undefined : fetch),
