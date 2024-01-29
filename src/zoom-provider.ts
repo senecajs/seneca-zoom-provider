@@ -61,6 +61,21 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
     entity: {
       meeting: {
         cmd: {
+          load: {
+            action: async function(this: any, entize: any, msg: any) {
+              let ent = msg.ent || {}
+              let q = msg.q || {}
+              let id = null == q.id ? ( null == ent ? null : ent.id ) : q.id
+              let meeting = null
+              
+              const get_url = `${options.update_url_meeting}/${id}`
+              meeting = await getJSON(get_url, makeConfig())
+              
+              return entize(meeting)
+              
+              
+            }
+          },
           list: {
             action: async function(this: any, entize: any, msg: any) {
               let q = msg.q || {}
@@ -75,6 +90,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
           },
           save: {
             action: async function(this: any, entize: any, msg: any) {
+            
               let ent = msg.ent
               let data = null != ent ? ent.data$(false) : {}
               let create_meeting_url = ''
@@ -89,7 +105,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
               if (update) {
                  create_meeting_url = `${options.update_url_meeting}/${ent.id}`
                  
-                 meeting = await fetch(create_meeting_url, {
+                 let res = await fetch(create_meeting_url, {
                    method: 'PATCH',
                    headers: {
                      'Content-Type': 'application/json',
@@ -97,6 +113,10 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
                    },
                    body: JSON.stringify(body),
                  })
+                 
+                 if(!(200 <= res.status && res.status < 300)) {
+                   throw new Error('status: ' + res.status.toString())
+                 }
                  
                  let get_meeting = await getJSON(create_meeting_url, makeConfig())
                  
@@ -128,9 +148,9 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
               })
               if(200 <= res.status && res.status < 300) {
                 return entize(null)
-              }
-              return entize({})
-              
+              } else {
+                throw new Error('status: ' + res.status.toString())
+	      }
               
             }
           },       

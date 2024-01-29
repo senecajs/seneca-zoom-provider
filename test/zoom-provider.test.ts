@@ -22,7 +22,6 @@ if (Fs.existsSync(__dirname + '/local-config.js')) {
   Config = require('./local-config')
 }
 
-
 describe('zoom-provider', () => {
 
   test('happy', async () => {
@@ -69,14 +68,25 @@ describe('zoom-provider', () => {
     
     expect(save0.topic === 'Updated Zoom Meeting'
       && save0.duration === 30).toBeTruthy()
-    
-    
+      
     let remove0 = await seneca.entity("provider/zoom/meeting").remove$({
       id: save0.id,
     })
     console.log('remove0: ', remove0)
     // console.log('MEETING: ', save0)
     
+  })
+  
+  test('load-meeting', async () => {
+    if (!Config) return;
+    const seneca = await makeSeneca()
+    
+    let load0 = await seneca.entity("provider/zoom/meeting").load$({
+      id: ''
+    })
+    load0.start_time = new Date()
+    await load0.save$()
+    console.log('load0: ', load0)
   })
   
   test('remove-meeting', async () => {
@@ -90,6 +100,8 @@ describe('zoom-provider', () => {
     const seneca = await makeSeneca()
 
     const list = await seneca.entity("provider/zoom/meeting").list$()
+    
+    console.log("LIST: ", list)
 
     expect(list.length > 0).toBeTruthy()
   })

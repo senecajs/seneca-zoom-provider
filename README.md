@@ -96,6 +96,7 @@ $ npm install @seneca/zoom-provider @seneca/env
 ## Action Patterns
 
 * ["sys":"entity","base":"zoom","cmd":"list","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdlistnamemeetingzoneprovider-)
+* ["sys":"entity","base":"zoom","cmd":"load","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdloadnamemeetingzoneprovider-)
 * ["sys":"entity","base":"zoom","cmd":"remove","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdremovenamemeetingzoneprovider-)
 * ["sys":"entity","base":"zoom","cmd":"save","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdsavenamemeetingzoneprovider-)
 * ["sys":"provider","get":"info","provider":"zoom"](#-sysprovidergetinfoproviderzoom-)
@@ -111,6 +112,23 @@ $ npm install @seneca/zoom-provider @seneca/env
 ### &laquo; `"sys":"entity","base":"zoom","cmd":"list","name":"meeting","zone":"provider"` &raquo;
 
 List Meeting data into an entity.
+
+
+
+
+
+#### Replies With
+
+
+```
+{}
+```
+
+
+----------
+### &laquo; `"sys":"entity","base":"zoom","cmd":"load","name":"meeting","zone":"provider"` &raquo;
+
+Load Meeting data into an entity.
 
 
 
