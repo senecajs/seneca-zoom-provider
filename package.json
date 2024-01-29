@@ -1,6 +1,6 @@
 {
   "name": "@seneca/zoom-provider",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "dist/zoom-provider.js",
   "type": "commonjs",
   "types": "dist/zoom-provider.d.ts",
