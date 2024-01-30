@@ -72,7 +72,7 @@ describe('zoom-provider', () => {
     let remove0 = await seneca.entity("provider/zoom/meeting").remove$({
       id: save0.id,
     })
-    console.log('remove0: ', remove0)
+    // console.log('remove0: ', remove0)
     // console.log('MEETING: ', save0)
     
   })
@@ -80,13 +80,19 @@ describe('zoom-provider', () => {
   test('load-meeting', async () => {
     if (!Config) return;
     const seneca = await makeSeneca()
-    
+    let save0 = await seneca.entity("provider/zoom/meeting").data$({
+      topic: 'My Zoom Meeting 2',
+      type: 2, 
+      start_time: new Date(),
+      duration: 30
+    }).save$()
     let load0 = await seneca.entity("provider/zoom/meeting").load$({
-      id: ''
+      id: save0.id,
     })
     load0.start_time = new Date()
+    load0.duration = 10
     await load0.save$()
-    console.log('load0: ', load0)
+    // console.log('load0: ', load0)
   })
   
   test('remove-meeting', async () => {
@@ -101,7 +107,7 @@ describe('zoom-provider', () => {
 
     const list = await seneca.entity("provider/zoom/meeting").list$()
     
-    console.log("LIST: ", list)
+    // console.log("LIST: ", list)
 
     expect(list.length > 0).toBeTruthy()
   })
