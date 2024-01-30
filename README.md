@@ -7,7 +7,7 @@ Provides access to the Zoom API using the Seneca *provider*
 convention. Zoom API entities are represented as Seneca entities so
 that they can be accessed using the Seneca entity API and messages.
 
-See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data
+See [seneca-entity](https://github.com/senecajs/seneca-entity/blob/master/README.md) and the [Seneca Data
 Entities
 Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html) for more details on the Seneca entity API.
 
