@@ -7,13 +7,14 @@ import * as Fs from 'fs'
 
 const Seneca = require('seneca')
 const SenecaMsgTest = require('seneca-msg-test')
+const { Maintain } = require('@seneca/maintain')
 
 import ZoomProvider from '../src/zoom-provider'
 import ZoomProviderDoc from '../src/ZoomProvider-doc'
 
 const BasicMessages = require('./basic.messages.js')
 
-const { Maintain } = require('@seneca/maintain')
+
 
 
 // Only run some tests locally (not on Github Actions).
