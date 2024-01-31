@@ -14,7 +14,7 @@
   "author": "Richard Rodger - richardrodger.com",
   "repository": {
     "type": "git",
-    "url": "git://zoom.com/senecajs/seneca-zoom-provider.git"
+    "url": "git://github.com/senecajs/seneca-zoom-provider.git"
   },
   "scripts": {
     "test": "jest --coverage",
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@seneca/doc": "^6.0.0",
-    "@seneca/maintain": "0.0.28",
+    "@seneca/maintain": "0.1.0",
     "@seneca/env": ">=0.2",
     "@seneca/provider": "2.0.1",
     "@types/jest": "^29.4.0",
