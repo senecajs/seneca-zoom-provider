@@ -87,9 +87,7 @@ describe('zoom-provider', () => {
       start_time: new Date(),
       duration: 30
     }).save$()
-    let load0 = await seneca.entity("provider/zoom/meeting").load$({
-      id: save0.id,
-    })
+    let load0 = await seneca.entity("provider/zoom/meeting").load$(save0.id)
     load0.start_time = new Date()
     load0.duration = 10
     await load0.save$()
