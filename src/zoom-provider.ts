@@ -147,7 +147,7 @@ function ZoomProvider(this: any, options: ZoomProviderOptions) {
                 },
               })
               if(200 <= res.status && res.status < 300) {
-                return entize(null)
+                return null
               } else {
                 throw new Error('status: ' + res.status.toString())
 	      }

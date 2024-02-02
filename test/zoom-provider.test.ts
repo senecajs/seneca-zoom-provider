@@ -67,10 +67,11 @@ describe('zoom-provider', () => {
       duration: 30
     })
     
-    expect(save0.topic === 'Updated Zoom Meeting'
-      && save0.duration === 30).toBeTruthy()
+    expect(save0.topic).toEqual('Updated Zoom Meeting')
+    expect(save0.duration).toEqual(30)
       
     let remove0 = await seneca.entity("provider/zoom/meeting").remove$(save0.id)
+    expect(remove0).toEqual(null)
     // console.log('remove0: ', remove0)
     // console.log('MEETING: ', save0)
     
@@ -85,11 +86,19 @@ describe('zoom-provider', () => {
       start_time: new Date(),
       duration: 30
     }).save$()
+    
+    expect(save0.duration).toEqual(30)
+    
     let load0 = await seneca.entity("provider/zoom/meeting").load$(save0.id)
     load0.start_time = new Date()
     load0.duration = 10
     await load0.save$()
-    // console.log('load0: ', load0)
+    
+    expect(load0.duration).toEqual(10)
+    
+    let remove0 = await seneca.entity("provider/zoom/meeting").remove$(load0.id)
+    
+    expect(remove0).toEqual(null)
   })
   
   test('remove-meeting', async () => {
