@@ -1,13 +1,13 @@
 ![Seneca Tangocard-Provider](http://senecajs.org/files/assets/seneca-logo.png)
 
-> _Seneca Tangocard-Provider_ is a plugin for [Seneca](http://senecajs.org)
+> _Seneca Zoom-Provider_ is a plugin for [Seneca](http://senecajs.org)
 
 
-Provides access to the Tangocard API using the Seneca *provider*
-convention. Tangocard API entities are represented as Seneca entities so
+Provides access to the Zoom API using the Seneca *provider*
+convention. Zoom API entities are represented as Seneca entities so
 that they can be accessed using the Seneca entity API and messages.
 
-See [seneca-entity](senecajs/seneca-entity) and the [Seneca Data
+See [seneca-entity](https://github.com/senecajs/seneca-entity/blob/master/README.md) and the [Seneca Data
 Entities
 Tutorial](https://senecajs.org/docs/tutorials/understanding-data-entities.html) for more details on the Seneca entity API.
 
@@ -36,38 +36,40 @@ Seneca()
   // Get API keys using the seneca-env plugin
   .use('env', {
     var: {
-      $TANGOCARD_APIKEY: String,
-      $TANGOCARD_USERTOKEN: String,
+      $ZOOM_CLIENT_SECRET: String,
+      $ZOOM_ACCOUNT_ID: String,
+      $ZOOM_CLIENT_ID: String,
     }
   })
   .use('provider', {
     provider: {
-      tangocard: {
+      zoom: {
         keys: {
-          apikey: { value: '$TANGOCARD_APIKEY' },
-          usertoken: { value: '$TANGOCARD_USERTOKEN' },
+          client_secret: { value: '$ZOOM_CLIENT_SECRET' },
+          account_id: { value: '$ZOOM_ACCOUNT_ID' },
+          client_id: { value: '$ZOOM_CLIENT_ID' }
         }
       }
     }
   })
-  .use('tangocard-provider')
+  .use('zoom-provider')
 
-let board = await seneca.entity('provider/tangocard/board')
-  .load$('<tangocard-board-id>')
+let meeting = await seneca.entity('provider/zoom/meeting')
+  .load$('<zoom-meeting-id>')
 
-Console.log('BOARD', board)
+Console.log('MEETING', meeting)
 
-board.desc = 'New description'
-board = await board.save$()
+meeting.start_time = new Date()
+meeting = await meeting.save$()
 
-Console.log('UPDATED BOARD', board)
+Console.log('UPDATED MEETING', meeting)
 
 ```
 
 ## Install
 
 ```sh
-$ npm install @seneca/tangocard-provider @seneca/env
+$ npm install @seneca/zoom-provider @seneca/env
 ```
 
 
@@ -77,22 +79,13 @@ $ npm install @seneca/tangocard-provider @seneca/env
 
 ## Options
 
-* `debug` : boolean <i><small>false</small></i>
-
-
-Set plugin options when loading with:
-```js
-
-
-seneca.use('TangocardProvider', { name: value, ... })
-
-
-```
-
-
-<small>Note: <code>foo.bar</code> in the list above means 
-<code>{ foo: { bar: ... } }</code></small> 
-
+* `url_meeting` : string
+* `update_url_meeting` : string
+* `auth_token_url` : string
+* `fetch` : function
+* `entity` : object
+* `debug` : boolean
+* `init$` : boolean
 
 
 <!--END:options-->
@@ -102,9 +95,11 @@ seneca.use('TangocardProvider', { name: value, ... })
 
 ## Action Patterns
 
-* [role:entity,base:tangocard,cmd:load,name:repo,zone:provider](#-roleentitybasetangocardcmdloadnamerepozoneprovider-)
-* [role:entity,base:tangocard,cmd:save,name:repo,zone:provider](#-roleentitybasetangocardcmdsavenamerepozoneprovider-)
-* [sys:provider,get:info,provider:tangocard](#-sysprovidergetinfoprovidertangocard-)
+* ["sys":"entity","base":"zoom","cmd":"list","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdlistnamemeetingzoneprovider-)
+* ["sys":"entity","base":"zoom","cmd":"load","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdloadnamemeetingzoneprovider-)
+* ["sys":"entity","base":"zoom","cmd":"remove","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdremovenamemeetingzoneprovider-)
+* ["sys":"entity","base":"zoom","cmd":"save","name":"meeting","zone":"provider"](#-sysentitybasezoomcmdsavenamemeetingzoneprovider-)
+* ["sys":"provider","get":"info","provider":"zoom"](#-sysprovidergetinfoproviderzoom-)
 
 
 <!--END:action-list-->
@@ -114,23 +109,67 @@ seneca.use('TangocardProvider', { name: value, ... })
 
 ## Action Descriptions
 
-### &laquo; `role:entity,base:tangocard,cmd:load,name:repo,zone:provider` &raquo;
+### &laquo; `"sys":"entity","base":"zoom","cmd":"list","name":"meeting","zone":"provider"` &raquo;
 
-Load Tangocard repository data into an entity.
+List Meeting data into an entity.
+
+
+
+
+
+#### Replies With
+
+
+```
+{}
+```
+
+
+----------
+### &laquo; `"sys":"entity","base":"zoom","cmd":"load","name":"meeting","zone":"provider"` &raquo;
+
+Load Meeting data into an entity.
+
+
+
+
+
+#### Replies With
+
+
+```
+{}
+```
+
+
+----------
+### &laquo; `"sys":"entity","base":"zoom","cmd":"remove","name":"meeting","zone":"provider"` &raquo;
+
+No description provided.
 
 
 
 ----------
-### &laquo; `role:entity,base:tangocard,cmd:save,name:repo,zone:provider` &raquo;
+### &laquo; `"sys":"entity","base":"zoom","cmd":"save","name":"meeting","zone":"provider"` &raquo;
 
-Update Tangocard repository data from an entity.
+Update/Save Meeting data into an entity.
 
+
+
+
+
+#### Replies With
+
+
+```
+{}
+```
 
 
 ----------
-### &laquo; `sys:provider,get:info,provider:tangocard` &raquo;
+### &laquo; `"sys":"provider","get":"info","provider":"zoom"` &raquo;
 
-Get information about the provider.
+Get information about the Zoom SDK.
 
 
 
@@ -138,3 +177,24 @@ Get information about the provider.
 
 
 <!--END:action-desc-->
+
+## More Examples
+
+## Motivation
+
+## Support
+
+Check out our sponsors and supporters, Voxgig, on their website [here](https://www.voxgig.com).
+
+## API
+
+## Contributing
+
+The [SenecaJS org](http://senecajs.org/) encourages participation. If you feel you can help in any way, be
+it with bug reporting, documentation, examples, extra testing, or new features, feel free
+to [create an issue](https://github.com/senecajs/seneca-maintain/issues/new), or better yet - [submit a Pull Request](https://github.com/senecajs/seneca-maintain/pulls). For more
+information on contribution, please see our [Contributing Guide](http://senecajs.org/contribute).
+
+## Background
+
+Check out the SenecaJS roadmap [here](https://senecajs.org/roadmap/)!
