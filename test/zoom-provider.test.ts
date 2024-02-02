@@ -70,9 +70,7 @@ describe('zoom-provider', () => {
     expect(save0.topic === 'Updated Zoom Meeting'
       && save0.duration === 30).toBeTruthy()
       
-    let remove0 = await seneca.entity("provider/zoom/meeting").remove$({
-      id: save0.id,
-    })
+    let remove0 = await seneca.entity("provider/zoom/meeting").remove$(save0.id)
     // console.log('remove0: ', remove0)
     // console.log('MEETING: ', save0)
     
